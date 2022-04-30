@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace AssetsProcessing {
+namespace FireTools {
     public static class Dds {
 
         public struct DdsMagic
@@ -35,7 +35,7 @@ namespace AssetsProcessing {
         public struct DDS_PIXELFORMAT {
             public uint size;
             public DDS_PIXELFORMAT_FLAGS flags;
-            public FrourCC fourCC;
+            public FourCC fourCC;
             public uint RGBBitCount;
             public uint RBitMask;
             public uint GBitMask;
@@ -43,7 +43,7 @@ namespace AssetsProcessing {
             public uint ABitMask;
 
             public static DDS_PIXELFORMAT make(DDS_PIXELFORMAT_FLAGS flags,
-                FrourCC fourCC, uint RGBBitCount, uint RBitMask,
+                FourCC fourCC, uint RGBBitCount, uint RBitMask,
                 uint GBitMask, uint BBitMask, uint ABitMask) {
 
                 DDS_PIXELFORMAT result = new DDS_PIXELFORMAT();
@@ -58,8 +58,8 @@ namespace AssetsProcessing {
                 return result;
             }
 
-            public static DDS_PIXELFORMAT DXT1 => make(DDS_PIXELFORMAT_FLAGS.DDS_FOURCC, MAKEFOURCC('D', 'X', 'T', '1'), 0, 0, 0, 0, 0);
-            public static DDS_PIXELFORMAT BC4_UNORM => make(DDS_PIXELFORMAT_FLAGS.DDS_FOURCC, MAKEFOURCC('B', 'C', '4', 'U'), 0, 0, 0, 0, 0);
+            public static DDS_PIXELFORMAT DXT1 => make(DDS_PIXELFORMAT_FLAGS.DDS_FOURCC, FourCC.Make('D', 'X', 'T', '1'), 0, 0, 0, 0, 0);
+            public static DDS_PIXELFORMAT BC4_UNORM => make(DDS_PIXELFORMAT_FLAGS.DDS_FOURCC, FourCC.Make('B', 'C', '4', 'U'), 0, 0, 0, 0, 0);
         }
 
         [Flags]
@@ -97,22 +97,6 @@ namespace AssetsProcessing {
             public uint reserved2;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct FrourCC
-        {
-            [MarshalAs(UnmanagedType.U1)]
-            public char c0;
-            [MarshalAs(UnmanagedType.U1)]
-            public char c1;
-            [MarshalAs(UnmanagedType.U1)]
-            public char c2;
-            [MarshalAs(UnmanagedType.U1)]
-            public char c3;
-        }
-
-        public static FrourCC MAKEFOURCC(char ch0, char ch1, char ch2, char ch3)
-        {
-            return new FrourCC {c0 = ch0, c1 = ch1, c2 = ch2, c3 = ch3};
-        }
+        
     }
 }

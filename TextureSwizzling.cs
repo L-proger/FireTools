@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AssetsProcessing {
+namespace FireTools {
     public static class TextureSwizzling {
         public static byte[] Swizzle(byte[] data, int width, int height, int blockSize) {
             return DoSwizzle(data, width, height, blockSize, false);

@@ -4,7 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace AssetsProcessing {
+namespace FireTools {
     public static class StreamExtensions {
 
         public static byte[] ReadBytes(this Stream stm, int size) {
@@ -30,6 +30,16 @@ namespace AssetsProcessing {
             var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
             var result = Marshal.PtrToStructure<T>(handle.AddrOfPinnedObject());
             handle.Free();
+            return result;
+        }
+
+
+        public static List<T> ReadStructArray<T>(this Stream stm, uint count) where T : struct {
+            List<T> result = new List<T>((int)count);
+            for (int i = 0; i < count; ++i)
+            {
+                result.Add(stm.ReadStruct<T>());
+            }
             return result;
         }
 

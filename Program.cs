@@ -7,8 +7,9 @@ using System.Linq;
 using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Text;
+using FireTools.Phyre;
 
-namespace AssetsProcessing {
+namespace FireTools {
 
     class Program {
         static void PrintPak(PakFileInput pak)
@@ -128,9 +129,6 @@ namespace AssetsProcessing {
         }
         static void ExportTextures()
         {
-        
-
-
             var path = @".pak";
             var stm = File.OpenRead(path);
             var p = new PakFileInput(stm, path);
@@ -151,14 +149,77 @@ namespace AssetsProcessing {
                 }
             }
         }
+
+
+
+        class ClassPrinter
+        {
+            public List<Phyre.ObjectsTable.Class> printedClasses = new List<ObjectsTable.Class>();
+
+            public void Print(Phyre.ObjectsTable.Class c)
+            {
+                string ident = "    ";
+
+                if (printedClasses.Contains(c))
+                {
+                    return;
+                }
+
+                if (c.baseClass != null)
+                {
+                    Print(c.baseClass);
+                }
+
+                Console.Write($"class {c.name}");
+                if (c.baseClass != null)
+                {
+                   
+                    Console.Write($" : {c.baseClass.name}");
+                }
+                Console.WriteLine($"{{");
+                Console.WriteLine($"public:");
+
+                foreach (var classMember in c.members)
+                {
+                    Console.WriteLine($"{ident}{classMember.fieldType.name} {classMember.name}; //is class: {classMember.fieldType is ObjectsTable.Class}");
+                }
+
+                Console.WriteLine($"}};");
+                Console.WriteLine($"");
+
+                printedClasses.Add(c);
+            }
+        }
+
         static void Main(string[] args)
         {
+            var stm = File.OpenRead(@"D:\tex.dds.phyre");
+            var header = Phyre.Archive.ReadHeader(stm);
+            var objectsTable = Phyre.Archive.ReadObjectsTable(stm);
+            objectsTable.Unpack();
 
-            ExportTextures();
-            var tp =
-                @".pak";
-            
-            Console.WriteLine("Done");
+            ClassPrinter printer = new ClassPrinter();
+
+            foreach (var c in objectsTable.Classes)
+            {
+                printer.Print(c);
+            }
+
+            var instanceListHeaders = new List<Archive.PInstanceListHeader>();
+            var instances = ((Archive.DX11Header) header).baseHeader.instanceListCount;
+            for (uint i = 0; i < instances; ++i)
+            {
+                var h = Phyre.Archive.ReadInstanceListHeader(stm);
+                instanceListHeaders.Add(h);
+
+                Console.WriteLine($"Objects count: {h.m_count} Type: {objectsTable.Classes[h.m_classID - 1]} {h.m_objectsSize}");
+
+            }
+
+
+            var mems = objectsTable.classDescriptors.Sum(v => v.classDataMemberCount);
+            Console.WriteLine();
+
         }
     }
 }

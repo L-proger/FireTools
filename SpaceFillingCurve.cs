@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AssetsProcessing {
+namespace FireTools {
     public static class SpaceFillingCurve {
         public static int Morton2D(int t, int sx, int sy) {
             int num1;
